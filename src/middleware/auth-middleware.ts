@@ -1,29 +1,32 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import jwt from 'jsonwebtoken'
 
-function authMiddleware(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers['authorization'];
+import { CustomRequest } from "../interfaces/custom-request";
 
-    if (!token) {
-        res.status(401).json({ message: 'No token provided' })
-        return
-    }
-    
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) {
-        res.status(500).json({ message: 'Errore generico' });
-        return
-    }
+function authMiddleware(req: CustomRequest, res: Response, next: NextFunction): void {
+	const token = req.headers['authorization'];
 
-    jwt.verify(token, jwtSecret, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ message: 'Token non valido' })
-        }
+	if (!token) {
+		res.status(401).json({ message: 'No token provided' });
+		return
+	}
 
-        req.userId = (decoded as jwt.JwtPayload)?.id;
-        next();
-    })
+	const jwtSecret = process.env.JWT_SECRET;
+	if (!jwtSecret) {
+		res.status(500).json({ message: 'Errore generico' });
+		return
+	}
 
+	jwt.verify(token, jwtSecret, (err, decoded) => {
+		if (err) {
+			res.status(401).json({ message: 'Token non valido' });
+			return
+		}
+
+		req.userId = (decoded as jwt.JwtPayload)?.id;
+		req.fileId = (decoded as jwt.JwtPayload)?.fileId;
+		next();
+	})
 }
 
 export default authMiddleware;
