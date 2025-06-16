@@ -23,6 +23,9 @@ function authMiddleware(req: CustomRequest, res: Response, next: NextFunction): 
 			return
 		}
 
+		// nel token inserisco sia l'id che il fileId dello user
+		// lo userId servirà nella creazione di un nuovo resoconto (in resoconto-routes)
+		// il fileId nel download del file excel corretto (in excel-service)
 		req.userId = (decoded as jwt.JwtPayload)?.id;
 		req.fileId = (decoded as jwt.JwtPayload)?.fileId;
 		next();

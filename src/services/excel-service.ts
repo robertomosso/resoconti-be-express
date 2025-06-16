@@ -10,6 +10,10 @@ export async function modificaExcel(req: CustomRequest) {
         const fileId = req.fileId;
         const tempPath = path.join(__dirname, '..', '..', 'temp.xlsx');
     
+		// il file excel viene scaricato in un file temporaneo, 
+		// modificato (aggiunta una riga nell'ultimo foglio),
+		// ricaricato su drive
+		// e viene cancellato il file temporaneo generato localmente
         try {
             await downloadExcel(fileId, tempPath);
             await appendRowToExcel(tempPath, req.body);

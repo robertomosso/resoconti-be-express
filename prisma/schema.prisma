@@ -18,12 +18,12 @@ model User {
   email              String      @unique
   password           String
   mustChangePassword Boolean     @default(true)
-  fileId             String     // google drive fileId
+  fileId             String      // google drive fileId
   Resoconto          Resoconto[]
 }
 
 model Resoconto {
-  id                 String  @id @default(uuid())
+  id                 String   @id @default(uuid())
   dataInizio         String
   dataFine           String
   tipoAttivita       String
@@ -33,6 +33,7 @@ model Resoconto {
   cliente            String
   colleghiSI         String?
   note               String?
+  createdAt          DateTime @default(now())
   userId             String
-  user               User    @relation(fields: [userId], references: [id])
+  user               User     @relation(fields: [userId], references: [id])
 }

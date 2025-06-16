@@ -2,10 +2,10 @@ import { google } from "googleapis";
 import { createWriteStream, createReadStream } from 'fs';
 
 // ----------- AUTH GOOGLE -------------------
-const SCOPES = process.env.GOOGLE_API_SCOPES ? [process.env.GOOGLE_API_SCOPES] : undefined;
+const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS ? JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS) : '';
 const auth = new google.auth.GoogleAuth({
-	keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-	scopes: SCOPES,
+	credentials,
+	scopes: ['https://www.googleapis.com/auth/drive'],
 });
 
 const drive = google.drive({ version: 'v3', auth });

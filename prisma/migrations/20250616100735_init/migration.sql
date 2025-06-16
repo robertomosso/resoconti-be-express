@@ -22,6 +22,7 @@ CREATE TABLE "Resoconto" (
     "cliente" TEXT NOT NULL,
     "colleghiSI" TEXT,
     "note" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Resoconto_pkey" PRIMARY KEY ("id")

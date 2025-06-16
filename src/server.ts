@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from "express";
 import cors from "cors";
 
@@ -6,11 +7,16 @@ import authRoutes from './routes/auth-routes'
 import resocontoRoutes from './routes/resoconto-routes'
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
+
+const allowedOrigins = [
+  'http://localhost:4201',             // per sviluppo locale
+  'https://tuo-frontend.onrender.com', // dominio del frontend su Render
+];
 
 app.use(cors({
-  origin: `${process.env.BASE_URL}:${PORT}`,
-  methods: "GET,POST,PUT,PATCH,DELETE",
+  origin: allowedOrigins,
+  methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS",
   allowedHeaders: "Content-Type,Authorization",
 }));
 
@@ -23,5 +29,5 @@ app.use('/auth', authRoutes);
 app.use('/resoconto', authMiddleware, resocontoRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${process.env.BASE_URL}:${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
