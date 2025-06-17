@@ -3,6 +3,8 @@ import prisma from "../prisma-client"
 
 import { modificaExcel } from "../services/excel-service";
 import { CustomRequest } from "../interfaces/custom-request";
+import { validateBody } from "../middleware/zod-middleware";
+import { resocontoSchema } from "../schemas/zod-schema";
 
 const router = express.Router();
 
@@ -31,7 +33,7 @@ router.get('/', async (req: CustomRequest, res: Response) => {
 	}
 })
 
-router.post('/', async (req: CustomRequest, res: Response) => {
+router.post('/', validateBody(resocontoSchema), async (req: CustomRequest, res: Response) => {
 	// si controlla se è presente lo userId nella request, 
 	// inserito in fase di login nel token e letto e inserito nella request dall'auth-middleware
 	if (req.userId) {

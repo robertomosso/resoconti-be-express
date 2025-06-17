@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 import { CustomRequest } from "../interfaces/custom-request";
 
-function authMiddleware(req: CustomRequest, res: Response, next: NextFunction): void {
+export const authMiddleware = (req: CustomRequest, res: Response, next: NextFunction) => {
 	const token = req.headers['authorization'];
 
 	if (!token) {
@@ -31,5 +31,3 @@ function authMiddleware(req: CustomRequest, res: Response, next: NextFunction): 
 		next();
 	})
 }
-
-export default authMiddleware;

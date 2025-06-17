@@ -3,14 +3,18 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import prisma from "../prisma-client"
+import { validateBody } from "../middleware/zod-middleware";
+import { changePasswordSchema, loginSchema, registerSchema } from "../schemas/zod-schema";
 
 const router = express.Router();
 
+const dominio = process.env.DOMINIO || '';
+
 // al momento questa url non è presente nel frontend
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', validateBody(registerSchema), async (req: Request, res: Response) => {
 	const { name, email, password, fileId } = req.body;
 
-	if (name && email && email.includes('@softwareindustriale.it') && password && fileId) {
+	if (name && email && email.includes(dominio) && password && fileId) {
 		try {
 			const hashedPassword = await bcrypt.hash(password, 10);
 	
@@ -32,10 +36,10 @@ router.post('/register', async (req: Request, res: Response) => {
 	}
 })
 
-router.post('/login', async (req: Request, res: Response): Promise<void> => {
+router.post('/login', validateBody(loginSchema), async (req: Request, res: Response): Promise<void> => {
 	const { email, password } = req.body;
 
-	if (email && email.includes('@softwareindustriale.it') && password) {
+	if (email && email.includes(dominio) && password) {
 		try {
 			const user = await prisma.user.findUnique({
 				where: { email }
@@ -88,10 +92,10 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 })
 
 
-router.post('/change-password', async (req: Request, res: Response): Promise<void> => {
+router.post('/change-password', validateBody(changePasswordSchema), async (req: Request, res: Response): Promise<void> => {
 	const { email, currentPassword, newPassword } = req.body;
 
-	if (email && email.includes('@softwareindustriale.it') && currentPassword && newPassword) {
+	if (email && email.includes(dominio) && currentPassword && newPassword) {
 		try {
 			const user = await prisma.user.findUnique({ where: { email } });
 			if (!user) {
