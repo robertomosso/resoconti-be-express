@@ -1,8 +1,8 @@
 import path from 'path';
 import exceljs from 'exceljs';
-import { downloadExcel, uploadExcel } from './google-drive-service';
 import { promises } from 'fs';
 
+import { downloadExcel, uploadExcel } from './google-drive-service';
 import { CustomRequest } from '../interfaces/custom-request';
 
 export async function modificaExcel(req: CustomRequest) {
@@ -12,8 +12,8 @@ export async function modificaExcel(req: CustomRequest) {
     
 		// il file excel viene scaricato in un file temporaneo, 
 		// modificato (aggiunta una riga nell'ultimo foglio),
-		// ricaricato su drive
-		// e viene cancellato il file temporaneo generato localmente
+		// ricaricato su drive,
+		// in ultimo il file temporaneo generato localmente viene cancellato 
         try {
             await downloadExcel(fileId, tempPath);
             await appendRowToExcel(tempPath, req.body);
@@ -33,7 +33,10 @@ export async function appendRowToExcel(filePath: string, values: any) {
 	try {
 		await workbook.xlsx.readFile(filePath);
 
+		// viene recuperato l'ultimo foglio del file excel
 		const lastSheet = workbook.worksheets[workbook.worksheets.length - 1];
+
+		// viene valutata l'ultima riga utilizzata
 		const lastUsedRowNumber = getLastUsedRow(lastSheet);
 		const newRowNumber = lastUsedRowNumber + 1;
 		const newRow = lastSheet.getRow(newRowNumber);
@@ -52,6 +55,7 @@ export async function appendRowToExcel(filePath: string, values: any) {
 			values.note,
 		];
 
+		// per ogni cella viene applicato lo stile e il formato
 		newRow.eachCell({ includeEmpty: true }, (cell, colNumber) => {
 			cell.border = {
 				top: { style: 'thin' },
@@ -74,10 +78,12 @@ export async function appendRowToExcel(filePath: string, values: any) {
 }
 
 function getLastUsedRow(sheet: exceljs.Worksheet) {
+	// viene ricercata la prima riga valorizzata partendo dall'ultima riga del file
 	for (let i = sheet.rowCount; i >= 1; i--) {
 		const row = sheet.getRow(i);
 		if (rowHasValues(row)) return i;
 	}
+	// nel caso non ci sia nessuna riga valorizzata si ritorna 0
 	return 0;
 }
 

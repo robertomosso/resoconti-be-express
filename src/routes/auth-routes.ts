@@ -91,7 +91,7 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 router.post('/change-password', async (req: Request, res: Response): Promise<void> => {
 	const { email, currentPassword, newPassword } = req.body;
 
-	if (email && currentPassword && newPassword) {
+	if (email && email.includes('@softwareindustriale.it') && currentPassword && newPassword) {
 		try {
 			const user = await prisma.user.findUnique({ where: { email } });
 			if (!user) {

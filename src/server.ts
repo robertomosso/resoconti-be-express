@@ -7,15 +7,12 @@ import authRoutes from './routes/auth-routes'
 import resocontoRoutes from './routes/resoconto-routes'
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-const allowedOrigins = [
-  'http://localhost:4201',             // per sviluppo locale
-  'https://tuo-frontend.onrender.com', // dominio del frontend su Render
-];
+const PORT = process.env.PORT || 3000;
+const ORIGIN = process.env.ORIGIN || '';
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: ORIGIN,
   methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS",
   allowedHeaders: "Content-Type,Authorization",
 }));
