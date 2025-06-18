@@ -6,45 +6,45 @@ export const registerSchema = z.object({
     name: z.string(),
     email: z
         .string()
-        .email('Inserire un\'email valida')
+        .email()
         .refine(email => email.endsWith(dominio), {
             message: 'Email non valida',
         }),
     password: z
         .string()
-        .min(8, 'Inserire minimo 8 caratteri')
-        .max(16, 'Inserire massimo 16 caratteri'),
+        .min(8)
+        .max(16),
     fileId: z.string(),
 });
 
 export const loginSchema = z.object({
     email: z
         .string()
-        .email('Inserire un\'email valida')
+        .email()
         .refine(email => email.endsWith(dominio), {
             message: 'Email non valida',
         }),
     password: z
         .string()
-        .min(8, 'Inserire minimo 8 caratteri')
-        .max(16, 'Inserire massimo 16 caratteri'),
+        .min(8)
+        .max(16),
 });
 
 export const changePasswordSchema = z.object({
     email: z
         .string()
-        .email('Inserire un\'email valida')
+        .email()
         .refine(email => email.endsWith(dominio), {
             message: 'Email non valida',
         }),
     currentPassword: z
         .string()
-        .min(8, 'Inserire minimo 8 caratteri')
-        .max(16, 'Inserire massimo 16 caratteri'),
+        .min(8)
+        .max(16),
     newPassword: z.
         string()
-        .min(8, 'Inserire minimo 8 caratteri')
-        .max(16, 'Inserire massimo 16 caratteri'),
+        .min(8)
+        .max(16),
 });
 
 export const resocontoSchema = z.object({
@@ -56,22 +56,22 @@ export const resocontoSchema = z.object({
         .string(),
     attivita: z
         .string()
-        .max(100, 'Il testo può avere massimo 100 caratteri'),
+        .max(100),
     descrizione: z
         .string()
-        .max(500, 'Il testo può avere massimo 500 caratteri'),
+        .max(500),
     personaRiferimento: z
         .string()
-        .max(50, 'Il testo può avere massimo 50 caratteri'),
+        .max(50),
     cliente: z
         .string()
-        .max(100, 'Il testo può avere massimo 100 caratteri'),
+        .max(100),
     colleghiSI: z
         .string()
-        .max(100, 'Il testo può avere massimo 100 caratteri').optional(),
+        .max(100).optional(),
     note: z
         .string()
-        .max(500, 'Il testo può avere massimo 500 caratteri').optional(),
+        .max(500).optional(),
     userId: z
         .string()
         .uuid(),

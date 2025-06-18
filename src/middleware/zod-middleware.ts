@@ -6,9 +6,10 @@ export const validateBody = (schema: ZodSchema) => {
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
-      res.status(400).json({
-        errors: result.error.flatten().fieldErrors,
-      });
+      const errors = result.error.flatten().fieldErrors;
+      console.log('validation errors:', errors);
+
+      res.status(400).json({ message: 'Dati inseriti non validi'});
       return
     }
 
