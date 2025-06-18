@@ -10,6 +10,9 @@ import resocontoRoutes from './routes/resoconto-routes'
 
 const app = express();
 
+// settaggio necessario se il server è dietro reverse proxy (come su Render.com)
+app.set('trust proxy', true);
+
 const PORT = process.env.PORT || 3000;
 
 // middlewares
