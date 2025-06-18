@@ -6,7 +6,7 @@
     "dev": "nodemon --ext ts --exec ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "startPrisma": "npx prisma migrate deploy && node server.js"
+    "startPrisma": "npx prisma migrate deploy && node dist/server.js"
   },
   "keywords": [],
   "author": "",
