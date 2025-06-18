@@ -62,13 +62,13 @@ export const resocontoSchema = z.object({
         .max(500),
     personaRiferimento: z
         .string()
-        .max(50),
+        .max(100),
     cliente: z
         .string()
         .max(100),
     colleghiSI: z
         .string()
-        .max(100).optional(),
+        .max(500).optional(),
     note: z
         .string()
         .max(500).optional(),
