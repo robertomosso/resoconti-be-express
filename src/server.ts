@@ -5,6 +5,7 @@ import { authMiddleware } from "./middleware/auth-middleware";
 import { securityMiddleware } from './middleware/security-middleware';
 import { authRateLimiter, globalRateLimiter } from './middleware/rate-limiter-middleware';
 import { loggerMiddleware } from './middleware/logger-middleware';
+import { errorLoggerMiddleware } from './middleware/error-logger.middleware';
 import authRoutes from './routes/auth-routes'
 import resocontoRoutes from './routes/resoconto-routes'
 
@@ -26,6 +27,8 @@ app.use('/auth', authRateLimiter, authRoutes);
 
 // endpoint di salvataggio resoconto settimanale
 app.use('/resoconto', authMiddleware, resocontoRoutes);
+
+app.use(errorLoggerMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);

@@ -38,12 +38,13 @@ router.post('/', validateBody(resocontoSchema), async (req: CustomRequest, res: 
 	// inserito in fase di login nel token e letto e inserito nella request dall'auth-middleware
 	if (req.userId) {
 		try {
+			// viene avviato il processo di modifica del file excel presente su drive
+			await modificaExcel(req);
+
+			// viene salvato a db il resoconto, solo nel caso la modifica dell'excel sia andata a buon fine
 			await prisma.resoconto.create({
 				data: { ...req.body, userId: req.userId}
 			});
-
-			// viene avviato il processo di modifica del file excel presente su drive
-			await modificaExcel(req);
 
 			res.status(201).json({ message: 'Inserimento avvenuto con successo' });
 		} catch (error) {
