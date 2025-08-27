@@ -12,6 +12,12 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum Role {
+  superuser
+  admin
+  user
+}
+
 model User {
   id                 String      @id @default(uuid())
   name               String
@@ -19,6 +25,11 @@ model User {
   password           String
   mustChangePassword Boolean     @default(true)
   fileId             String      // google drive fileId
+  role               Role        @default(user)
+  // se db vuoto il primo utente sarà superuser, 
+  // superuser può aggiungere altri utenti e settarne il ruolo (anche superuser)
+  // admin può aggiungere user e vedere la tabella dei resoconti degli utenti
+  // user può solo inserire resoconti
   Resoconto          Resoconto[]
 }
 

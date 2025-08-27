@@ -14,7 +14,7 @@ const dominio = process.env.DOMINIO || '';
 router.post('/register', validateBody(registerSchema), async (req: Request, res: Response) => {
 	const { name, email, password, fileId } = req.body;
 
-	if (name && email && email.includes(dominio) && password && fileId) {
+	if (name && email?.includes(dominio) && password && fileId) {
 		try {
 			const hashedPassword = await bcrypt.hash(password, 10);
 	
@@ -39,7 +39,7 @@ router.post('/register', validateBody(registerSchema), async (req: Request, res:
 router.post('/login', validateBody(loginSchema), async (req: Request, res: Response): Promise<void> => {
 	const { email, password } = req.body;
 
-	if (email && email.includes(dominio) && password) {
+	if (email?.includes(dominio) && password) {
 		try {
 			const user = await prisma.user.findUnique({
 				where: { email }
@@ -95,7 +95,7 @@ router.post('/login', validateBody(loginSchema), async (req: Request, res: Respo
 router.post('/change-password', validateBody(changePasswordSchema), async (req: Request, res: Response): Promise<void> => {
 	const { email, currentPassword, newPassword } = req.body;
 
-	if (email && email.includes(dominio) && currentPassword && newPassword) {
+	if (email?.includes(dominio) && currentPassword && newPassword) {
 		try {
 			const user = await prisma.user.findUnique({ where: { email } });
 			if (!user) {
