@@ -1,13 +1,14 @@
 import 'dotenv/config';
 import express from "express";
 
-import { authMiddleware } from "./middleware/auth-middleware";
-import { securityMiddleware } from './middleware/security-middleware';
-import { authRateLimiter, globalRateLimiter } from './middleware/rate-limiter-middleware';
-import { loggerMiddleware } from './middleware/logger-middleware';
+import { authMiddleware } from "./middleware/auth.middleware";
+import { securityMiddleware } from './middleware/security.middleware';
+import { authRateLimiter, globalRateLimiter } from './middleware/rate-limiter.middleware';
+import { loggerMiddleware } from './middleware/logger.middleware';
 import { errorLoggerMiddleware } from './middleware/error-logger.middleware';
 import authRoutes from './routes/auth-routes'
 import resocontoRoutes from './routes/resoconto-routes'
+import usersRoutes from './routes/users-routes'
 
 const app = express();
 
@@ -22,10 +23,8 @@ app.use(express.json());
 app.use(globalRateLimiter);
 app.use(loggerMiddleware());
 
-// endpoint di auth (register, login, logout, change-password)
 app.use('/auth', authRateLimiter, authRoutes);
-
-// endpoint di salvataggio resoconto settimanale
+app.use('/users', usersRoutes);
 app.use('/resoconto', authMiddleware, resocontoRoutes);
 
 app.use(errorLoggerMiddleware);

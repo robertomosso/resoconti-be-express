@@ -1,14 +1,14 @@
 import express, { Response } from "express";
-import prisma from "../prisma-client"
 
+import prisma from "../prisma-client"
 import { modificaExcel } from "../services/excel-service";
 import { CustomRequest } from "../interfaces/custom-request";
-import { validateBody } from "../middleware/zod-middleware";
+import { validateBody } from "../middleware/zod.middleware";
 import { resocontoSchema } from "../schemas/zod-schema";
 
 const router = express.Router();
 
-router.get('/', async (req: CustomRequest, res: Response) => {
+router.get('/ultimo-resoconto', async (req: CustomRequest, res: Response) => {
 	if (req.userId) {
 		try {
 			const ultimoResoconto = await prisma.resoconto.findFirst({
@@ -33,17 +33,18 @@ router.get('/', async (req: CustomRequest, res: Response) => {
 	}
 })
 
-router.post('/', validateBody(resocontoSchema), async (req: CustomRequest, res: Response) => {
+router.post('/inserisciResoconto', validateBody(resocontoSchema), async (req: CustomRequest, res: Response) => {
 	// si controlla se è presente lo userId nella request, 
 	// inserito in fase di login nel token e letto e inserito nella request dall'auth-middleware
 	if (req.userId) {
 		try {
+			// TODO da rirpistinare
 			// viene avviato il processo di modifica del file excel presente su drive
-			await modificaExcel(req);
+			// await modificaExcel(req);
 
 			// viene salvato a db il resoconto, solo nel caso la modifica dell'excel sia andata a buon fine
 			await prisma.resoconto.create({
-				data: { ...req.body, userId: req.userId}
+				data: { ...req.body, userId: req.userId }
 			});
 
 			res.status(201).json({ message: 'Inserimento avvenuto con successo' });
@@ -52,6 +53,26 @@ router.post('/', validateBody(resocontoSchema), async (req: CustomRequest, res: 
 		}
 	} else {
 		res.status(500).json({ message: 'User id non presente' });
+	}
+})
+
+router.get('/resoconti-utente/:userId', async (req: CustomRequest, res: Response) => {
+	const userId = req.params['userId'];
+
+	if (!userId) {
+		res.status(500).json({ message: 'User id non presente' });
+	}
+
+	try {
+		const result = await prisma.resoconto.findMany({
+			where: {
+				userId
+			}
+		});
+
+		res.status(200).json({ resoconti: result });
+	} catch (error) {
+		res.status(500).json({ error });
 	}
 })
 

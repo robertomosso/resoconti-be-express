@@ -2,8 +2,9 @@ import { z } from "zod";
 
 const dominio = process.env.DOMINIO || '';
 
-export const registerSchema = z.object({
-    name: z.string(),
+export const registerSuperuserSchema = z.object({
+    name: z
+        .string(),
     email: z
         .string()
         .email()
@@ -14,7 +15,48 @@ export const registerSchema = z.object({
         .string()
         .min(8)
         .max(16),
-    fileId: z.string(),
+    fileId: z
+        .string()
+        .optional(),
+    // role: z.literal('superuser')
+});
+
+export const registerAdminSchema = z.object({
+    name: z
+        .string(),
+    email: z
+        .string()
+        .email()
+        .refine(email => email.endsWith(dominio), {
+            message: 'Email non valida',
+        }),
+    password: z
+        .string()
+        .min(8)
+        .max(16),
+    fileId: z
+        .string()
+        .optional(),
+    role: z
+        .literal('admin'),
+});
+
+export const registerUserSchema = z.object({
+    name: z
+        .string(),
+    email: z
+        .string()
+        .email()
+        .refine(email => email.endsWith(dominio), {
+            message: 'Email non valida',
+        }),
+    password: z
+        .string()
+        .min(8)
+        .max(16),
+    fileId: z
+        .string(),
+    // non dovrebbe servire settare il role in quanto è impostato di default a true su schema.prisma
 });
 
 export const loginSchema = z.object({
@@ -68,10 +110,12 @@ export const resocontoSchema = z.object({
         .max(100),
     colleghiSI: z
         .string()
-        .max(500).optional(),
+        .max(500)
+        .optional(),
     note: z
         .string()
-        .max(500).optional(),
+        .max(500)
+        .optional(),
     userId: z
         .string()
         .uuid(),
