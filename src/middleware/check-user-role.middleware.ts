@@ -2,7 +2,7 @@ import { NextFunction, Response } from "express";
 import jwt from 'jsonwebtoken'
 
 import prisma from "../prisma-client";
-import { CustomRequest } from "../interfaces/custom-request";
+import { CustomRequest } from "../interfaces/custom-request.interface";
 import { asyncHandler } from "../utils/async-handler";
 
 export const checkUserRoleMiddleware = (requiredRole: 'register-admin' | 'register-user') => {

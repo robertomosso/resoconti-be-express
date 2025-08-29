@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import jwt from 'jsonwebtoken'
 
-import { CustomRequest } from "../interfaces/custom-request";
+import { CustomRequest } from "../interfaces/custom-request.interface";
 
 export const authMiddleware = (req: CustomRequest, res: Response, next: NextFunction) => {
 	const token = req.headers['authorization'];
