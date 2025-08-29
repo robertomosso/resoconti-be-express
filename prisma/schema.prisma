@@ -13,7 +13,6 @@ datasource db {
 }
 
 enum Role {
-  superuser
   admin
   user
 }
@@ -26,8 +25,7 @@ model User {
   mustChangePassword Boolean     @default(true)
   fileId             String?     // google drive fileId
   role               Role        @default(user)
-  // se db vuoto il primo utente sarà superuser, 
-  // superuser può aggiungere altri utenti e settarne il ruolo
+  // se db vuoto il primo utente sarà admin, 
   // admin può aggiungere user e vedere la tabella dei resoconti degli utenti
   // user può solo inserire resoconti
   Resoconto          Resoconto[]

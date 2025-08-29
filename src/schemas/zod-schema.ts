@@ -2,25 +2,6 @@ import { z } from "zod";
 
 const dominio = process.env.DOMINIO || '';
 
-export const registerSuperuserSchema = z.object({
-    name: z
-        .string(),
-    email: z
-        .string()
-        .email()
-        .refine(email => email.endsWith(dominio), {
-            message: 'Email non valida',
-        }),
-    password: z
-        .string()
-        .min(8)
-        .max(16),
-    fileId: z
-        .string()
-        .optional(),
-    // role: z.literal('superuser')
-});
-
 export const registerAdminSchema = z.object({
     name: z
         .string(),

@@ -4,12 +4,11 @@ import jwt from 'jsonwebtoken'
 
 import prisma from "../prisma-client"
 import { validateBody } from "../middleware/zod.middleware";
-import { checkUserRoleMiddleware } from "../middleware/check-user-role.middleware";
+import { canRegisterUserMiddleware } from "../middleware/can-register-user.middleware";
 import {
 	changePasswordSchema,
 	loginSchema,
 	registerUserSchema,
-	registerSuperuserSchema,
 	registerAdminSchema
 } from "../schemas/zod-schema";
 import { asyncHandler } from "../utils/async-handler";
@@ -18,49 +17,10 @@ import { HttpError } from "../errors/http-error"
 const router = express.Router();
 const dominio = process.env.DOMINIO || '';
 
-router.post(
-	'/register-superuser',
-	validateBody(registerSuperuserSchema),
-	asyncHandler(async (req: Request, res: Response) => {
-		try {
-			const count = await prisma.user.count();
-
-			// se ci sono già utenti bloccare le operazioni successive
-			if (count > 0) {
-				throw new HttpError('Operazione non autorizzata', 401);
-			}
-
-			const { name, email, password, fileId } = req.body;
-
-			if (name && email?.includes(dominio) && password) {
-				const hashedPassword = await bcrypt.hash(password, 10);
-
-				await prisma.user.create({
-					data: {
-						name,
-						email,
-						password: hashedPassword,
-						role: 'superuser',
-						mustChangePassword: false,
-						fileId,
-					}
-				});
-
-				res.status(200).json({ message: 'Registrazione effettuata con successo' });
-			} else {
-				throw new HttpError('Dati inseriti non validi', 400);
-			}
-		} catch (error) {
-			const message = error instanceof Error ? error.message : 'Errore del server'
-			throw new HttpError(message, 500);
-		}
-	})
-)
-
-// questa rotta può chiamarla solo user con role "superuser"
+// questa rotta può chiamarla solo user con role "admin" oppure se tabella user è ancora vuota
 router.post(
 	'/register-admin',
-	checkUserRoleMiddleware('register-admin'),
+	canRegisterUserMiddleware('register-admin'),
 	validateBody(registerAdminSchema),
 	asyncHandler(async (req: Request, res: Response) => {
 		const { name, email, password, fileId } = req.body;
@@ -91,10 +51,10 @@ router.post(
 	})
 )
 
-// questa rotta può chiamarla user con role "superuser" o "admin"
+// questa rotta può chiamarla user con role "admin"
 router.post(
 	'/register-user',
-	checkUserRoleMiddleware('register-user'),
+	canRegisterUserMiddleware(),
 	validateBody(registerUserSchema),
 	asyncHandler(async (req: Request, res: Response) => {
 		const { name, email, password, fileId } = req.body;

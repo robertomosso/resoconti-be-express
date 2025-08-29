@@ -8,6 +8,8 @@ import { HttpError } from "../errors/http-error";
 
 const router = express.Router();
 
+// questa rotta può essere chiamata senza middleware, necessario per verificare lato frontend il reindirizzamento verso la pagina di registrazione
+// nel caso non ci siano ancora utenti registrati sulla tabella user
 router.get(
 	'/has-user',
 	asyncHandler(async (req: CustomRequest, res: Response) => {
@@ -31,10 +33,6 @@ router.get(
 				select: {
 					id: true,
 					name: true,
-					// email: true,
-					// mustChangePassword: true,
-					// fileId: true,
-					// role: true
 				}
 			});
 			res.json({ users })
