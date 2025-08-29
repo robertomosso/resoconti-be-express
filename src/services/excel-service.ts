@@ -4,6 +4,7 @@ import { promises } from 'fs';
 
 import { downloadExcel, uploadExcel } from './google-drive-service';
 import { CustomRequest } from '../interfaces/custom-request.interface';
+import { HttpError } from '../errors/http-error';
 
 export async function modificaExcel(req: CustomRequest) {
     if (req.fileId) {
@@ -20,10 +21,11 @@ export async function modificaExcel(req: CustomRequest) {
             await uploadExcel(fileId, tempPath);
             await promises.unlink(tempPath);
         } catch (error) {
-            throw error;
+            const message = error instanceof Error ? error.message : 'Errore del server'
+			throw new HttpError(message, 500);
         }
     } else {
-        throw new Error("fileId non presente");
+		throw new HttpError('fileId non presente', 500);
     }
 }
 
@@ -73,7 +75,8 @@ export async function appendRowToExcel(filePath: string, values: any) {
 
 		await workbook.xlsx.writeFile(filePath);
 	} catch (error) {
-		throw error;
+		const message = error instanceof Error ? error.message : 'Errore del server'
+        throw new HttpError(message, 500);
 	}
 }
 
