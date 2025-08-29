@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import prisma from "../prisma-client";
 import { CustomRequest } from "../interfaces/custom-request.interface";
 import { asyncHandler } from "../utils/async-handler";
+import { HttpError } from "../errors/http-error";
 
 export const checkUserRoleMiddleware = (requiredRole: 'register-admin' | 'register-user') => {
 	return asyncHandler(async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -11,14 +12,12 @@ export const checkUserRoleMiddleware = (requiredRole: 'register-admin' | 'regist
 			const token = req.headers['authorization'];
 
 			if (!token) {
-				res.status(401).json({ message: 'No token provided' });
-				return
+				throw new HttpError('Nessun token presente', 401);
 			}
-
+			
 			const jwtSecret = process.env.JWT_SECRET;
 			if (!jwtSecret) {
-				res.status(500).json({ message: 'Errore generico' });
-				return
+				throw new HttpError('Errore nella lettura della chiave jwt', 500);
 			}
 
 			const decoded = jwt.verify(token, jwtSecret) as { id: string };
@@ -29,12 +28,12 @@ export const checkUserRoleMiddleware = (requiredRole: 'register-admin' | 'regist
 				(requiredRole === 'register-admin' && user.role !== 'superuser') ||
 				(requiredRole === 'register-user' && user.role !== 'superuser' && user.role !== 'admin')
 			) {
-				return res.status(403).json({ message: 'Non autorizzato' });
+				throw new HttpError('Non autorizzato', 403);
 			}
-
+			
 			next();
 		} catch (error) {
-			return res.status(401).json({ message: 'Token non valido' });
+			throw new HttpError('Token non valido', 401);
 		}
 	})
 }

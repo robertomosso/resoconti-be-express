@@ -2,25 +2,23 @@ import { NextFunction, Response } from "express";
 import jwt from 'jsonwebtoken'
 
 import { CustomRequest } from "../interfaces/custom-request.interface";
+import { HttpError } from "../errors/http-error";
 
 export const authMiddleware = (req: CustomRequest, res: Response, next: NextFunction) => {
 	const token = req.headers['authorization'];
 
 	if (!token) {
-		res.status(401).json({ message: 'No token provided' });
-		return
+		throw new HttpError('Nessun token presente', 401);
 	}
-
+	
 	const jwtSecret = process.env.JWT_SECRET;
 	if (!jwtSecret) {
-		res.status(500).json({ message: 'Errore generico' });
-		return
+		throw new HttpError('Errore nella lettura della chiave jwt', 500);
 	}
-
+	
 	jwt.verify(token, jwtSecret, (err, decoded) => {
 		if (err) {
-			res.status(401).json({ message: 'Token non valido' });
-			return
+			throw new HttpError('Token non valido', 401);
 		}
 
 		// nel token inserisco sia l'id che il fileId dello user
